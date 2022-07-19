@@ -4,7 +4,7 @@ Official PyTorch implementation of ECCV 2022 paper: Mining Relations among Cross
 ## Abstract
 The essence of video semantic segmentation (VSS) is how to leverage temporal information for prediction. Previous efforts are mainly devoted to developing new techniques to calculate the cross-frame affinities such as optical flow and attention. Instead, this paper contributes from a different angle by  mining relations among cross-frame affinities, upon which better temporal information aggregation could be achieved. We explore relations among affinities in two aspects: single-scale intrinsic correlations and multi-scale relations. Inspired by traditional feature processing, we propose Single-scale Affinity Refinement (SAR) and Multi-scale Affinity Aggregation (MAA). To make it feasible to execute MAA, we propose a Selective Token Masking (STM) strategy to select a subset of consistent reference tokens for different scales when calculating affinities, which also improves the efficiency of our method. At last, the cross-frame affinities strengthened by SAR and MAA are adopted for adaptively aggregating temporal information. Our experiments demonstrate that the proposed method performs favorably against state-of-the-art VSS methods.
 
-![block images](https://github.com/GuoleiSun/VSS-MRCFA/Figs/diagram.png)
+![block images](https://github.com/GuoleiSun/VSS-MRCFA/blob/main/Figs/diagram.png)
 
 Authors: [Guolei Sun](https://scholar.google.com/citations?hl=zh-CN&user=qd8Blw0AAAAJ), [Yun Liu](https://yun-liu.github.io/), [Hao Tang](https://scholar.google.com/citations?user=9zJkeEMAAAAJ&hl=en), [Ajad Chhatkuli](https://scholar.google.com/citations?user=3BHMHU4AAAAJ&hl=en), Luc Van Gool.
 
