@@ -6,7 +6,7 @@ The essence of video semantic segmentation (VSS) is how to leverage temporal inf
 
 ![block images](https://github.com/GuoleiSun/VSS-MRCFA/blob/main/Figs/diagram.png)
 
-Authors: [Guolei Sun](https://scholar.google.com/citations?hl=zh-CN&user=qd8Blw0AAAAJ), [Yun Liu](https://yun-liu.github.io/), [Hao Tang](https://scholar.google.com/citations?user=9zJkeEMAAAAJ&hl=en), [Ajad Chhatkuli](https://scholar.google.com/citations?user=3BHMHU4AAAAJ&hl=en), Luc Van Gool.
+Authors: [Guolei Sun](https://scholar.google.com/citations?hl=zh-CN&user=qd8Blw0AAAAJ), [Yun Liu](https://yun-liu.github.io/), [Hao Tang](https://scholar.google.com/citations?user=9zJkeEMAAAAJ&hl=en), [Le Zhang](https://zhangleuestc.github.io), [Ajad Chhatkuli](https://scholar.google.com/citations?user=3BHMHU4AAAAJ&hl=en), Luc Van Gool.
 
 ## Note
 This is a preliminary version for early access and I will clean it for better readability.
