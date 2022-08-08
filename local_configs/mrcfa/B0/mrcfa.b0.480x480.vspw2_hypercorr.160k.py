@@ -27,7 +27,8 @@ model = dict(
         decoder_params=dict(embed_dim=256),
         loss_decode=dict(type='CrossEntropyLoss', use_sigmoid=False, loss_weight=1.0),
         num_clips=4,
-        hypercorre=True),
+        hypercorre=True,
+        backbone='b0'),
     # model training and testing settings
     train_cfg=dict(),
     test_cfg=dict(mode='whole'))
