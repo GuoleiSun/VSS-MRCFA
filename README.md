@@ -69,12 +69,14 @@ The code is heavily based on the following repositories:
 Thanks for their amazing works.
 
 ## Citation
+```
 @article{sun2022mining,
   title={Mining Relations among Cross-Frame Affinities for Video Semantic Segmentation},
   author={Sun, Guolei and Liu, Yun and Tang, Hao and Chhatkuli, Ajad and Zhang, Le and Van Gool, Luc},
   journal={arXiv preprint arXiv:2207.10436},
   year={2022}
 }
+```
 
 ## Contact
 - Guolei Sun, sunguolei.kaust@gmail.com
