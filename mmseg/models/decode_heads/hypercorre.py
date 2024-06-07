@@ -149,13 +149,6 @@ class hypercorre_topk2(nn.Module):
         super().__init__()
         self.stack_id=stack_id
         self.dim=dim
-        # self.num_qkv=2
-        # self.qkv_bias=qkv_bias
-        # self.qkv0 = nn.Linear(dim[0], dim[0] * self.num_qkv, bias=qkv_bias)
-        # self.qkv1 = nn.Linear(dim[1], dim[1] * self.num_qkv, bias=qkv_bias)
-        # self.qkv2 = nn.Linear(dim[2], dim[2] * self.num_qkv, bias=qkv_bias)
-        # self.qkv3 = nn.Linear(dim[3], dim[3] * self.num_qkv, bias=qkv_bias)
-        # self.q = nn.Linear(dim, dim , bias=qkv_bias)
         self.q1 = nn.Linear(dim[1], dim[1], bias=qkv_bias)
         self.q2 = nn.Linear(dim[2], dim[2], bias=qkv_bias)
         self.q3 = nn.Linear(dim[3], dim[3], bias=qkv_bias)
@@ -218,20 +211,12 @@ class hypercorre_topk2(nn.Module):
 
         loca_selection=[]
         indices_sele=[]
-        # k_top=5
-        # threh=0.5
-        # print(threh,k_top)
 
-        # query_qkv_all=query_qkv_all[::-1]
-        # query_shape_all=query_shape_all[::-1]
-        # supp_qkv_all=supp_qkv_all[::-1]
-        # supp_shape_all=supp_shape_all[::-1]
         atten_all=[]
         s_all=[]
 
         B=supp_qkv_all[0].shape[0]
         q_num_ref=query_qkv_all[0].shape[1]
-        # print(query_shape_all)
         for ii in range(0,len(supp_frame)-1):
             hy,wy=query_shape_all[ii]
             hx,wx=supp_shape_all[ii]
@@ -245,30 +230,12 @@ class hypercorre_topk2(nn.Module):
                 
                 num_selection=torch.unique((loca_selection[ii-1]).sum(2))
                 assert num_selection.shape[0]==1 and num_selection.dim()==1
-                # query_selected=torch.masked_select(querry_selected, loca_selection[ii-2].unsqueeze(-1))
                 query_selected=query_selected[loca_selection[ii-1]>0.5].reshape(B, q_num_ref, int(num_selection[0]),cx)     ##  B*(num_clips-1)*s*c
 
                 atten=torch.matmul(supp_qkv_all[ii], query_selected.transpose(2,3))    ## B*(num_clips-1)*(hx*wx)*(s)
-                # atten_fullmatrix=-100*torch.ones(B,q_num_ref,atten.shape[2],(query_shape_all[ii][0]*query_shape_all[ii][1])).cuda()
-                # indices=indices_sele[ii-1]
-                # assert indices.shape[-1]==num_selection[0]
-                # indices=indices.unsqueeze(2).expand(B,q_num_ref,atten.shape[2],indices.shape[-1])    ## B*(num_clips-1)*(hx*wx)*(s)
-                # atten_fullmatrix=atten_fullmatrix.scatter(3,indices,atten)
             if ii==0:
-                # atten_temp=atten.reshape(B*atten.shape[1],hx*wx,query_shape_all[ii][0],query_shape_all[ii][1])
-                # atten_topk=F.interpolate()
                 atten_topk=torch.topk(atten_fullmatrix,self.k_top,dim=2)[0]    # B*(num_clips-1)*(k)*(hy*wy)
                 atten_topk=atten_topk.sum(2)   # B*(num_clips-1)*(hy*wy)
-                # atten_kthvalue=torch.kthvalue(atten_topk,atten_topk.shape[-1]*threh,dim=2)[0]   # 
-                # topk_mask=atten_topk>atten_kthvalue   # B*(num_clips-1)*(hy*wy)
-                # topk_mask=topk_mask.reshape(B, topk_mask.shape[1], hy, wy)  # B*(num_clips-1)*hy*wy
-                # s=int(hy*wy*threh)
-                # indices=torch.topk(atten_topk,s,dim=2)[1]    # B*(num_clips-1)*s
-                # topk_mask=torch.zeros_like(atten_topk)
-                # topk_mask=topk_mask.scatter(2,indices,1)    # B*(num_clips-1)*(hy*wy)
-                # atten=atten[topk_mask.unsqueeze(2).expand_as(atten)>0.5].reshape(B,q_num_ref,hx*wx,s)
-
-                # topk_mask=topk_mask.reshape(B, q_num_ref, hy, wy)
                 
                 hy_next, wy_next=query_shape_all[ii+1]
 
@@ -293,27 +260,16 @@ class hypercorre_topk2(nn.Module):
                     topk_mask=topk_mask.scatter(2,indices,1)    # B*(num_clips-1)*(hy_next*wy_next)
 
                     atten=atten[topk_mask.unsqueeze(2).expand_as(atten)>0.5].reshape(B,q_num_ref,hx*wx,s)
-                    # topk_mask=topk_mask.reshape(B, topk_mask.shape[1], hy_next, wy_next)
-                # topk_mask=topk_mask.reshape(B, topk_mask.shape[1], query_shape_all[ii][0], query_shape_all[ii][1])  # B*(num_clips-1)*hy*wy
-                # loca_selection[ii-1]=F.interpolate(topk_mask, query_shape_all[ii], mode='nearest', align_corners=False)>0.5
                 loca_selection.append(topk_mask)
-                # indices_sele[0]=indices
             elif ii<=len(supp_frame)-3:
                 loca_selection.append(loca_selection[-1])
 
             s=atten.shape[3]
-            # print("here: ", atten.shape, atten.max(), atten.min())
             atten=atten.permute(0,1,3,2).reshape(B*q_num_ref*s,hx,wx)   ## (B*(num_clips-1)*s)*hx*wx
             atten_all.append(atten.unsqueeze(1))
             s_all.append(s)
-        #         print(atten.shape) # [60, 60, 30, 30],[30, 30, 30, 30],[15, 15, 15, 15]
-        # print(len(atten_all))
         atten_all=self.hpn(atten_all)
         start_time2=time.time()
-        # B,num_ref_clips,_,_,_=query_frame[0].shape
-        # atten_new=atten_new.reshape(B,num_ref_clips,atten_new.shape[-2],atten_new.shape[-1])
-        # atten_all=[atten_one.squeeze(1).reshape(B,q_num_ref,s_all[i],supp_shape_all.shape[0],supp_shape_all.shape[1]).permute(0,1,3,4,2) for i,atten_one in enumerate(atten_all)]
         atten_all=atten_all.squeeze(1).reshape(B,q_num_ref,s_all[-1],supp_shape_all[2][0]*supp_shape_all[2][1]).permute(0,1,3,2)   # B*(num_clips-1)*(hx*wx)*s
-        # print(atten_all.shape)
         return atten_all, loca_selection[-1]>0.5
 
